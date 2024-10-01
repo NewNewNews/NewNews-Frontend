@@ -6,7 +6,17 @@ import Search from './Search';
 import UserMenu from './UserMenu';
 import { ModeToggle } from './ModeToggle';
 
-export default function Navbar() {
+interface User {
+    email:             String
+    hashedPassword: String
+}
+
+interface NavbarProps {
+    currentUser?: User;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
+    console.log(currentUser);
     return(
         <div className="fixed w-full bg-white dark:bg-black z-10 shadow-sm">
             <div className="py-4 border-b-[1px]">
@@ -22,3 +32,5 @@ export default function Navbar() {
         </div>
     )
 }
+
+export default Navbar;

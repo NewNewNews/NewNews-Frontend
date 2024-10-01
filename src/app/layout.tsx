@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import {Nunito} from 'next/font/google'
+import { Nunito } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "../components/navbar/Navbar";
 import ClientOnly from "@/components/ClientOnly";
 import RegisterModal from "@/components/modals/RegisterModal";
 import ToasterProvider from "@/providers/ToasterProvider";
+import LoginModal from "@/components/modals/LoginModal";
+import ClientProviders from "@/components/client-provider";
 
 const font = Nunito({
   subsets: ["latin"],
@@ -23,22 +25,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={font.className}
-      >
-        <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-          <ClientOnly>
+      <body className={font.className}>
+        <ClientOnly>
+          <ClientProviders>
             <ToasterProvider />
+            <LoginModal />
             <RegisterModal />
             <Navbar />
-          </ClientOnly>
-        </ThemeProvider>
-        {children}
+          </ClientProviders>
+          <div className="pb-20 pt-28">
+            {children}
+          </div>
+        </ClientOnly>
       </body>
     </html>
   );
