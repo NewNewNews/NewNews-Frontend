@@ -11,9 +11,11 @@ import Input from "../inputs/Input";
 import useRegisterModal from "@/hooks/useRegisterModal";
 import { toast } from "react-hot-toast";
 import Button from "../Button";
+import useLoginModal from "@/hooks/useLoginModal";
 
 const RegisterModal = () => {
   const registerModal = useRegisterModal();
+  const LoginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -42,6 +44,11 @@ const RegisterModal = () => {
         .finally(() => {
             setIsLoading(false);
         });
+  }
+
+  const loginOpen = () => {
+    LoginModal.onOpen();
+    registerModal.onClose();
   }
 
   const bodyContent = (
@@ -99,7 +106,7 @@ const RegisterModal = () => {
                         Already have an account?
                     </div>
                     <div 
-                        onClick={registerModal.onClose}
+                        onClick={loginOpen}
                         className="text-neutral-800 cursor-pointer hover:underline dark:text-white"
                     >
                         Log in
