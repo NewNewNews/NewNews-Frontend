@@ -8,6 +8,7 @@ import RegisterModal from "@/components/modals/RegisterModal";
 import ToasterProvider from "@/providers/ToasterProvider";
 import LoginModal from "@/components/modals/LoginModal";
 import ClientProviders from "@/components/client-provider";
+import LogoutModal from "@/components/modals/LogoutModdal";
 
 const font = Nunito({
   subsets: ["latin"],
@@ -31,6 +32,7 @@ export default function RootLayout({
             <ToasterProvider />
             <LoginModal />
             <RegisterModal />
+            <LogoutModal />
             <Navbar />
           </ClientProviders>
           <div className="pb-20 pt-28">

@@ -5,7 +5,7 @@ import Logo from './Logo';
 import Search from './Search';
 import UserMenu from './UserMenu';
 import { ModeToggle } from './ModeToggle';
-
+import { useSession } from "next-auth/react"
 interface User {
     email:             String
     hashedPassword: String
@@ -16,6 +16,7 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
+    const { data: session } = useSession()
     console.log(currentUser);
     return(
         <div className="fixed w-full bg-white dark:bg-black z-10 shadow-sm">
@@ -26,6 +27,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
                         <Search />
                         <ModeToggle />
                         <UserMenu />
+                        <div>{session ? "there is user" : "pls login"}</div>
                     </div>
                 </Container>
             </div>

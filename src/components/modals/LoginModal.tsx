@@ -9,7 +9,6 @@ import { FieldValues, set, SubmitHandler, useForm } from "react-hook-form";
 import Modal from "./Modal";
 import Heading from "../Heading";
 import Input from "../inputs/Input";
-// import useRegisterModal from "@/hooks/useRegisterModal";
 import useLoginModal from "@/hooks/useLoginModal";
 import { toast } from "react-hot-toast";
 import Button from "../Button";
@@ -27,93 +26,65 @@ const LoginModal = () => {
   } = useForm<FieldValues>({
     defaultValues: {
       email: "",
-      password: "",
+      hashedPassword: "",
     },
   });
-
-  // const onSubmit : SubmitHandler<FieldValues> = async (data) => {
-  //   setIsLoading(true);
-
-  //   signIn('credentials', {
-  //     ...data,
-  //     redirect: false,
-  //   })
-  //   .then((callback) => {
-  //       setIsLoading(false);
-
-  //       if (callback?.ok) {
-  //         toast.success('Logged in successfully');
-  //         router.refresh();
-  //         loginModal.onClose();
-  //       }
-
-  //       if (callback?.error) {
-  //         toast.error(callback.error);
-  //       }
-  //   })
-  // }
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setIsLoading(true);
 
-    axios.post("http://localhost:8080/api/login", data)
-        .then((callback) => {
-            setIsLoading(false);
-            
-            if (callback.status === 200) {
-                toast.success('Logged in successfully');
-                localStorage.setItem('token', data.token);
-                router.refresh();
-                loginModal.onClose();
-            }
+    try {
+      const result = await signIn("credentials", {
+        ...data,
+        redirect: false,
+      });
 
-            if (callback.status === 500) {
-                toast.error('Invalid credentials');
-            }
-        })
-        .catch((error) => {
-            toast.error('Something went wrong.');
-        })
-        .finally(() => {
-            setIsLoading(false);
-        });
-  }
+      if (result?.error) {
+        toast.error(result.error);
+      } else if (result?.ok) {
+        toast.success("Logged in successfully");
+        router.refresh();
+        loginModal.onClose();
+      }
+    } catch (error) {
+      toast.error("Something went wrong.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
-        <Heading
-            title="Welcome back"
-            subtitle="Login to your account!"
-        />
-        <Input
-            id="email"
-            label="Email"
-            disabled={isLoading}
-            register={register}
-            errors={errors}
-            required
-        />
-        <Input
-            id="hashedPassword"
-            type="password"
-            label="Password"
-            disabled={isLoading}
-            register={register}
-            errors={errors}
-            required
-        />
+      <Heading title="Welcome back" subtitle="Login to your account!" />
+      <Input
+        id="email"
+        label="Email"
+        disabled={isLoading}
+        register={register}
+        errors={errors}
+        required
+      />
+      <Input
+        id="hashedPassword"
+        type="password"
+        label="Password"
+        disabled={isLoading}
+        register={register}
+        errors={errors}
+        required
+      />
     </div>
-    );
+  );
 
   return (
     <Modal
-        disabled={isLoading}
-        isOpen={loginModal.isLoginOpen}
-        title="Login"
-        actionlabel="Continue"
-        onClose={loginModal.onClose}
-        onSubmit={handleSubmit(onSubmit)}
-        body={bodyContent}
+      disabled={isLoading}
+      isOpen={loginModal.isLoginOpen}
+      title="Login"
+      actionlabel="Continue"
+      onClose={loginModal.onClose}
+      onSubmit={handleSubmit(onSubmit)}
+      body={bodyContent}
     />
   );
 };
