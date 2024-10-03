@@ -31,7 +31,8 @@ const LogoutModal = () => {
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
-      <Heading title="Logout" subtitle="Are you sure you want to logout?" />
+      <Heading title="Are you sure you want to log out?" subtitle="You will be logged out of your account." />
+      <p>Please confirm that you want to log out. If you wish to continue, click the "Log Out" button below. Otherwise, click "Cancel" to return to your account.</p>
     </div>
   );
 
@@ -44,6 +45,8 @@ const LogoutModal = () => {
       onClose={logoutModal.onClose}
       onSubmit={onSubmit}
       body={bodyContent}
+      secondaryLabel="Cancel"
+      secondaryAction={logoutModal.onClose}
     />
   );
 };

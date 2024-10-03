@@ -12,6 +12,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 export default function UserMenu() {
   // const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
   const logoutModal = useLogoutModal();
@@ -42,43 +43,24 @@ export default function UserMenu() {
         {isOpen && (
           <div className="absolute rounded-xl shadow-md w-[40vw] md:w-3/4 bg-white dark:bg-neutral-900 overflow-hidden right-0 top-12 text-sm">
             <div className="flex flex-col cursor-pointer">
-              <>
-                <MenuItem onClick={loginModal.onOpen} label="Login" />
-                <MenuItem onClick={registerModal.onOpen} label="Sign up" />
-                <MenuItem onClick={logoutModal.onOpen} label="Log out" />
-              </>
-              {/* {session ? (
-                                <>
-                                    <MenuItem 
-                                        label={`Welcome, ${session.user?.email}`} 
-                                        onClick={() => {}}
-                                    />
-                                    <MenuItem 
-                                        label="My Favourites"
-                                        onClick={() => {}}
-                                    />
-                                    <MenuItem 
-                                        label="My Profile"
-                                        onClick={() => {}}
-                                    />
-                                    <hr/>
-                                    <MenuItem 
-                                        label="Logout" 
-                                        onClick={() => signOut()} 
-                                    />
-                                </>
-                            ) : (
-                                <>
-                                    <MenuItem
-                                        onClick={loginModal.onOpen}
-                                        label="Login"
-                                    />
-                                    <MenuItem
-                                        onClick={registerModal.onOpen}
-                                        label="Sign up"
-                                    />
-                                </>
-                            )} */}
+              {session ? (
+                <>
+                  <MenuItem
+                    label={`Welcome, ${session.user?.email}`}
+                    onClick={() => {}}
+                  />
+                  <hr />
+                  <MenuItem label="My Favourites" onClick={() => {}} />
+                  <MenuItem label="My Profile" onClick={() => {}} />
+                  <hr />
+                  <MenuItem onClick={logoutModal.onOpen} label="Logout"  />
+                </>
+              ) : (
+                <>
+                  <MenuItem onClick={loginModal.onOpen} label="Login" />
+                  <MenuItem onClick={registerModal.onOpen} label="Sign up" />
+                </>
+              )}
             </div>
           </div>
         )}
