@@ -22,9 +22,9 @@ export default async function Home() {
   return (
     <ClientOnly>
       <Container>
-      <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Latest News</h1>
-            <NewsList />
+        <div className="container mx-auto p-4">
+          <h1 className="text-2xl font-bold mb-4">Latest News</h1>
+          <NewsList />
         </div>
         {/* <div className="pt-24 grid grid-cols-1 sm:grid-cls-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8">
           <div>Latest News</div>
