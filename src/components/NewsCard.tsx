@@ -14,13 +14,11 @@ interface NewsCardProps {
     onClick?: () => void;
 }
 
-// Utility function to truncate text to a specific word count
-const truncateText = (text: string, wordCount: number) => {
-    const words = text.split(' ');
-    if (words.length <= wordCount) {
+const truncateText = (text: string, charCount: number) => {
+    if (text.length <= charCount) {
         return text;
     }
-    return words.slice(0, wordCount).join(' ') + '...'; // Add ellipsis to indicate truncation
+    return text.slice(0, charCount) + '...';
 };
 
 const NewsCard: React.FC<NewsCardProps> = ({ data, category, date, publisher, url, actionId="", disabled, onAction, onClick }) => {
@@ -36,8 +34,8 @@ const NewsCard: React.FC<NewsCardProps> = ({ data, category, date, publisher, ur
     return (
         <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-md p-4 cursor-pointer" onClick={onClick}>
             <div className="flex flex-col gap-2">
-                <div className="text-xs text-neutral-500 dark:text-neutral-400">{category}</div>
-                <div className="text-lg font-semibold">{truncateText(data, 10)}</div> {/* Truncate the news data */}
+                <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-400">{category}</div>
+                <div className="text-lg font-semibold">{truncateText(data, 80)}</div>
                 <div className="text-sm text-neutral-500 dark:text-neutral-400">{publisher}</div>
                 <div className="text-sm text-neutral-500 dark:text-neutral-400">{date}</div>
             </div>

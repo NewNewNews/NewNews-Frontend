@@ -63,13 +63,19 @@ const Modal: React.FC<ModalProps> = ({
         secondaryAction();
     }, [disabled, secondaryAction]);
 
+    const handleOverlayClick = useCallback((event: React.MouseEvent) => {
+        if (event.currentTarget === event.target) {
+            handleClose();
+        }
+    }, [handleClose]);
+
     if (!isOpen) {
         return null;
     }
 
     return (
         <>
-        <div className='justify-center items-center flex overflow-x-hidden overflow-y-hidden fixed inset-0 z-50 outline-none focus:outline-none bg-neutral-800/70 dark:bg-black/70'>
+        <div className='justify-center items-center flex overflow-x-hidden overflow-y-hidden fixed inset-0 z-50 outline-none focus:outline-none bg-neutral-800/70 dark:bg-black/70' onClick={handleOverlayClick}>
             <div className='relative w-full md:w-4/6 lg:w-3/6 xl:w-2/5 my-6 mx-auto h-full lg:h-auto md:h-auto'>
                 <div className={`translate duration-300 h-full ${showModal ? 'translate-y-0' : 'translate-y-full'} ${showModal ? 'opacity-100' : 'opacity-0'} `}>
                     <div className='translate h-full lg:h-auto md:h-auto border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white dark:bg-neutral-900 outline-none focus:outline-none'>
@@ -85,7 +91,7 @@ const Modal: React.FC<ModalProps> = ({
                         </div>
 
                         {/* Modal Body */}
-                        <div className="relative p-6 flex-auto text-black dark:text-neutral-200">
+                        <div className="relative p-6 flex-auto text-black dark:text-neutral-200 overflow-y-auto max-h-[60vh]">
                             {body}
                         </div>
 
