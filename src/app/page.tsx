@@ -4,21 +4,6 @@ import getNews from "./actions/getNews";
 import NewsList from "@/components/modals/NewsList";
 
 export default async function Home() {
-  const news = await getNews();
-  // const isEmpty = true;
-
-  // if (isEmpty) {
-  //   return (
-  //     <ClientOnly>
-  //       <Container>
-  //         <div className="pt-24 grid grid-cols-1 sm:grid-cls-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8">
-  //           <div>No Selected News</div>
-  //         </div>
-  //       </Container>
-  //     </ClientOnly>
-  //   );
-  // }
-
   return (
     <ClientOnly>
       <Container>

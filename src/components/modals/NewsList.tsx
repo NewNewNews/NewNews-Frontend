@@ -41,19 +41,23 @@ const NewsList: React.FC = () => {
     return (
         <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {newsList.map((news) => (
-                    <NewsCard
-                        key={news.actionId}
-                        data={news.data}
-                        category={news.category}
-                        date={formatDate(news.date)}
-                        publisher={news.publisher}
-                        url={news.url}
-                        actionId={news.actionId}
-                        disabled={news.disabled}
-                        onClick={() => handleCardClick(news)}
-                    />
-                ))}
+                {newsList ? (
+                    newsList.map((news) => (
+                        <NewsCard
+                            key={news.actionId}
+                            data={news.data}
+                            category={news.category}
+                            date={formatDate(news.date)}
+                            publisher={news.publisher}
+                            url={news.url}
+                            actionId={news.actionId}
+                            disabled={news.disabled}
+                            onClick={() => handleCardClick(news)}
+                        />
+                    ))
+                ) : (
+                    <p>No news available</p>
+                )}
             </div>
 
             {selectedNews && (
