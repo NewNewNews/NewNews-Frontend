@@ -11,7 +11,6 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 
 export default function UserMenu() {
-  // const { data: session, status } = useSession();
   const { data: session } = useSession();
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();

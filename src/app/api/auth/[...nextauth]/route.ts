@@ -43,16 +43,18 @@ const handler = NextAuth({
         if (!res.ok) return null;
         const user = await res.json();
 
-        // Ensure that the user object contains the token
-        const authToken = res.headers
-          .get("set-cookie")
-          ?.split(";")
-          .find((cookie) => cookie.startsWith("auth_token"))
-          ?.split("=")[1];
-        console.log("this is my token", authToken);
+        // Extract the auth_token from the Set-Cookie header
+        const setCookie = res.headers.get("set-cookie");
+        const authToken = setCookie?.split(";").find(cookie => cookie.trim().startsWith("auth_token="))?.split("=")[1];
+
+        if (!authToken) {
+          console.error("No auth_token found in response");
+          return null;
+        }
+
         return {
           ...user,
-          token: authToken, // Include the token in the user object
+          token: authToken,
         };
       },
     }),
@@ -60,17 +62,16 @@ const handler = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.accessToken = user.token; // Use the token from the user object
+        token.accessToken = user.token;
       }
 
-      // Fetch additional user data from /api/me here, if needed
+      // Fetch additional user data from /api/me
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/protected/me`, {
         headers: {
-          Cookie: `auth_token=${token.accessToken}`, // Pass the token here
+          Cookie: `auth_token=${token.accessToken}`,
         },
         credentials: "include",
       });
-      // console.log("This is respond", res.json());
 
       if (res.ok) {
         const userData = await res.json();

@@ -34,10 +34,8 @@ export default function RootLayout({
             <RegisterModal />
             <LogoutModal />
             <Navbar />
+            <div className="pb-20 pt-24 dark:bg-neutral-900">{children}</div>
           </ClientProviders>
-          <div className="pb-20 pt-28">
-            {children}
-          </div>
         </ClientOnly>
       </body>
     </html>

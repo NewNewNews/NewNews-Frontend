@@ -33,7 +33,7 @@ const RegisterModal = () => {
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setIsLoading(true);
 
-    axios.post("http://localhost:8080/api/register", data)
+    axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/register`, data)
         .then(() => {
             localStorage.setItem('token', data.token);
             registerModal.onClose();

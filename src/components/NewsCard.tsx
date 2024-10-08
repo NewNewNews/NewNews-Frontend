@@ -32,7 +32,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ data, category, date, publisher, ur
     );
 
     return (
-        <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-md p-4 cursor-pointer" onClick={onClick}>
+        <div className="bg-white dark:bg-black rounded-lg shadow-md p-4 cursor-pointer hover:scale-105 transition-transform duration-200 ease-in-out" onClick={onClick}>
             <div className="flex flex-col gap-2">
                 <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-400">{category}</div>
                 <div className="text-lg font-semibold">{truncateText(data, 80)}</div>
