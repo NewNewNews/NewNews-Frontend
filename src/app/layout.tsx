@@ -8,7 +8,7 @@ import RegisterModal from "@/components/modals/RegisterModal";
 import ToasterProvider from "@/providers/ToasterProvider";
 import LoginModal from "@/components/modals/LoginModal";
 import ClientProviders from "@/components/client-provider";
-import LogoutModal from "@/components/modals/LogoutModdal";
+import LogoutModal from "@/components/modals/LogoutModal";
 
 const font = Nunito({
   subsets: ["latin"],

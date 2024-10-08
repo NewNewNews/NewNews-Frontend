@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import NewsCard from "../NewsCard";
 import NewsModal from "./NewsModal";
 import toast from "react-hot-toast";
@@ -13,16 +13,31 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { useNewsList } from "@/hooks/useNewsList";
+import { Separator } from "@radix-ui/react-separator";
 
 const NewsList: React.FC = () => {
   const [newsList, setNewsList] = useState<any[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedNews, setSelectedNews] = useState<any>(null);
   const [categories, setCategories] = useState<any[]>([]);
+  const [publishers, setPublishers] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedPublisher, setSelectedPublisher] = useState<string | null>(
+    null
+  );
+  const [sortBy, setSortBy] = useState("newest");
+  const searchTerm = useNewsList((state) => state.searchTerm);
   const { data: session } = useSession();
 
   const fetchNews = async () => {
@@ -37,6 +52,11 @@ const NewsList: React.FC = () => {
         new Set(data.map((news: { category: string }) => news.category))
       ).sort((a, b) => a.localeCompare(b));
       setCategories(uniqueCategories);
+
+      const uniquePublishers = Array.from(
+        new Set(data.map((news: { publisher: string }) => news.publisher))
+      ).sort((a, b) => a.localeCompare(b));
+      setPublishers(uniquePublishers);
     } catch (error) {
       toast.error("Error fetching news");
     }
@@ -44,7 +64,6 @@ const NewsList: React.FC = () => {
 
   useEffect(() => {
     fetchNews();
-    // Optionally, call getMe() here if needed
   }, []);
 
   const handleCardClick = (news: any) => {
@@ -66,14 +85,56 @@ const NewsList: React.FC = () => {
     return new Date(dateString).toLocaleDateString("th-TH", options);
   };
 
-  // Filter news based on selectedCategory
-  const filteredNewsList = selectedCategory
-    ? newsList.filter((news) => news.category === selectedCategory)
-    : newsList;
+  const filteredNewsList = useMemo(() => {
+    return newsList
+      .filter((news) => {
+        const searchInTitle = news.data
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+        const filterByCategory = selectedCategory
+          ? news.category === selectedCategory
+          : true;
+        const filterByPublisher = selectedPublisher
+          ? news.publisher === selectedPublisher
+          : true;
+
+        return searchInTitle && filterByCategory && filterByPublisher;
+      })
+      .sort((a, b) => {
+        if (sortBy === "newest") {
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        }
+        if (sortBy === "oldest") {
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        }
+        return 0;
+      });
+  }, [
+    newsList,
+    selectedCategory,
+    selectedPublisher,
+    sortBy,
+    searchTerm,
+  ]);
+
+  const noNewsMessage = () => {
+    let message = "No news available";
+    if (searchTerm) {
+        message = " No news matching your search.";
+    }
+    if (selectedCategory || selectedPublisher) {
+      message = " No news matching your filters.";
+    }
+    return message;
+  };
 
   return (
     <>
-      <div className="mb-4">
+      <h1 className="text-2xl font-bold mb-4">
+        {sortBy === "newest" ? "Newest News" : "Oldest News"}
+      </h1>
+      <div className="flex flex-col md:flex-row md:items-center mb-4 gap-4 sm:flex-row">
+        {/* Category Filter */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">
@@ -82,7 +143,6 @@ const NewsList: React.FC = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56">
             <DropdownMenuLabel>Category</DropdownMenuLabel>
-
             <DropdownMenuSeparator />
             <ScrollArea className="h-72 w-54 rounded-md border">
               {categories.map((cat) => (
@@ -100,6 +160,44 @@ const NewsList: React.FC = () => {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {/* Publisher Filter */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">
+              {selectedPublisher ? selectedPublisher : "Select Publisher"}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuLabel>Publisher</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {publishers.map((pub) => (
+              <DropdownMenuItem
+                key={pub}
+                onClick={() => setSelectedPublisher(pub)}
+              >
+                {pub}
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => setSelectedPublisher(null)}>
+              Clear Filter
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Sort By Date */}
+        <Select value={sortBy} onValueChange={setSortBy}>
+          <SelectTrigger className="w-36 dark:bg-black">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newest">Newest News</SelectItem>
+            <SelectItem value="oldest">Oldest News</SelectItem>
+            <Separator />
+            <SelectItem value=" ">Clear Sort</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredNewsList.length > 0 ? (
@@ -117,7 +215,7 @@ const NewsList: React.FC = () => {
             />
           ))
         ) : (
-          <p>No news available</p>
+            <h1 className="text-center text-gray-500">{noNewsMessage()}</h1>
         )}
       </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
-import { use, useCallback } from "react";
+import { useCallback } from "react";
+import { Separator } from "@/components/ui/separator";
 
 interface NewsCardProps {
     data: string;
@@ -35,7 +36,9 @@ const NewsCard: React.FC<NewsCardProps> = ({ data, category, date, publisher, ur
         <div className="bg-white dark:bg-black rounded-lg shadow-md p-4 cursor-pointer hover:scale-105 transition-transform duration-200 ease-in-out" onClick={onClick}>
             <div className="flex flex-col gap-2">
                 <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-400">{category}</div>
+                <Separator className="my-1" />
                 <div className="text-lg font-semibold">{truncateText(data, 80)}</div>
+                <Separator className="my-1" />
                 <div className="text-sm text-neutral-500 dark:text-neutral-400">{publisher}</div>
                 <div className="text-sm text-neutral-500 dark:text-neutral-400">{date}</div>
             </div>

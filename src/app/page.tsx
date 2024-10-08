@@ -8,7 +8,6 @@ export default async function Home() {
     <ClientOnly>
       <Container>
         <div className="container mx-auto p-4">
-              <h1 className="text-2xl font-bold mb-4">Latest News</h1>
               <NewsList />
         </div>
       </Container>
