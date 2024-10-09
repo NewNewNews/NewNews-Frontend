@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import NewsCard from "../NewsCard";
 import NewsModal from "./NewsModal";
 import toast from "react-hot-toast";
@@ -23,6 +23,27 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNewsList } from "@/hooks/useNewsList";
 import { Separator } from "@radix-ui/react-separator";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { CalendarIcon } from "@radix-ui/react-icons";
+import { format } from "date-fns";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { cn } from "@/lib/utils";
 
 const NewsList: React.FC = () => {
   const [newsList, setNewsList] = useState<any[]>([]);
@@ -34,7 +55,11 @@ const NewsList: React.FC = () => {
   const [selectedPublisher, setSelectedPublisher] = useState<string | null>(
     null
   );
+  const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(
+    undefined
+  );
   const [sortBy, setSortBy] = useState("newest");
+  const [availableDates, setAvailableDates] = useState<Date[]>([]);
   const searchTerm = useNewsList((state) => state.searchTerm);
 
   const fetchNews = async () => {
@@ -54,6 +79,9 @@ const NewsList: React.FC = () => {
         new Set(data.map((news: { publisher: string }) => news.publisher))
       ).sort((a, b) => a.localeCompare(b));
       setPublishers(uniquePublishers);
+
+      const dates = Array.from(new Set(data.map((news: { date: string }) => new Date(news.date).toDateString())));
+      setAvailableDates(dates.map(dateStr => new Date(dateStr)));
     } catch (error) {
       toast.error("Error fetching news");
     }
@@ -94,8 +122,15 @@ const NewsList: React.FC = () => {
         const filterByPublisher = selectedPublisher
           ? news.publisher === selectedPublisher
           : true;
+        const filterByDate = selectedDate
+          ? // Compare only the date part (ignore time)
+            new Date(news.date).toLocaleDateString() ===
+            selectedDate.toLocaleDateString()
+          : true;
 
-        return searchInTitle && filterByCategory && filterByPublisher;
+        return (
+          searchInTitle && filterByCategory && filterByPublisher && filterByDate
+        );
       })
       .sort((a, b) => {
         if (sortBy === "newest") {
@@ -112,17 +147,26 @@ const NewsList: React.FC = () => {
     selectedPublisher,
     sortBy,
     searchTerm,
+    selectedDate,
   ]);
 
   const noNewsMessage = () => {
     let message = "No news available";
     if (searchTerm) {
-        message = " No news matching your search.";
+      message = " No news matching your search.";
     }
     if (selectedCategory || selectedPublisher) {
       message = " No news matching your filters.";
     }
     return message;
+  };
+
+  const isAvailableDate = (date: Date) => {
+    return availableDates.some(availableDate => 
+      date.getFullYear() === availableDate.getFullYear() &&
+      date.getMonth() === availableDate.getMonth() &&
+      date.getDate() === availableDate.getDate()
+    );
   };
 
   return (
@@ -183,14 +227,47 @@ const NewsList: React.FC = () => {
           </DropdownMenuContent>
         </DropdownMenu>
 
+        {/* Date Filter */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant={"outline"}
+              className={cn(
+                "text-center font-normal",
+                !selectedDate
+              )}
+            >
+              {selectedDate ? (
+              format(selectedDate, "PPP") // Format the selected date if any
+            ) : (
+              <h1>Pick a date</h1> // Placeholder when no date is selected
+            )}
+              <CalendarIcon className="ml-2 h-4 w-4 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={setSelectedDate}
+              disabled={(date) => !isAvailableDate(date)}
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
+
         {/* Sort By Date */}
         <Select value={sortBy} onValueChange={setSortBy}>
           <SelectTrigger className="md:w-fit sm:w-56 justify-center bg-white dark:bg-black">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="newest" className="">Newest News</SelectItem>
-            <SelectItem value="oldest" className="">Oldest News</SelectItem>
+            <SelectItem value="newest" className="">
+              Newest News
+            </SelectItem>
+            <SelectItem value="oldest" className="">
+              Oldest News
+            </SelectItem>
             <Separator />
             <SelectItem value=" ">Clear Sort</SelectItem>
           </SelectContent>
@@ -212,7 +289,9 @@ const NewsList: React.FC = () => {
             />
           ))
         ) : (
-          <h1 className="col-span-full text-5xl font-medium text-center text-gray-500 w-full h-full mt-40">{noNewsMessage()}</h1>
+          <h1 className="col-span-full text-5xl font-medium text-center text-gray-500 w-full h-full mt-40">
+            {noNewsMessage()}
+          </h1>
         )}
       </div>
 
