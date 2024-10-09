@@ -34,7 +34,7 @@ export default function RootLayout({
             <RegisterModal />
             <LogoutModal />
             <Navbar />
-            <div className="pb-20 pt-24 bg-neutral-100 dark:bg-neutral-900">{children}</div>
+            <div className="min-h-screen pb-20 pt-24 bg-neutral-100 dark:bg-neutral-900">{children}</div>
           </ClientProviders>
         </ClientOnly>
       </body>

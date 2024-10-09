@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState, useEffect } from "react";
 import { BiSearch } from "react-icons/bi";
 import { useNewsList } from "@/hooks/useNewsList";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,10 @@ import { SearchIcon } from "lucide-react";
 export default function Search() {
   const [searchInput, setSearchInput] = useState("");
   const setSearchTerm = useNewsList((state) => state.setSearchTerm); // Zustand action
+
+  useEffect(() => {
+    setSearchTerm(searchInput); // Update the search term in the store
+  }, [searchInput]);
 
   const handleSearch = () => {
     setSearchTerm(searchInput); // Update the search term in the store
@@ -22,7 +26,6 @@ export default function Search() {
         onChange={(e) => {
             const value = e.target.value;
             setSearchInput(value);
-            handleSearch()
           }}
         placeholder="Any News"
         className="border dark:border-neutral-800 focus:border-transparent dark:bg-black rounded-full pl-6 pr-10 py-4 transition duration-300 ease-in-out"

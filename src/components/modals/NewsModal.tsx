@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Modal from "./Modal";
 import { Separator } from "../ui/separator";
+import { ScrollArea } from "../ui/scroll-area";
+import { useNewsList } from "@/hooks/useNewsList";
 
 interface NewsModalProps {
   isOpen: boolean;
@@ -15,6 +17,25 @@ const NewsModal: React.FC<NewsModalProps> = ({
   news,
   formatDate,
 }) => {
+  const searchTerm = useNewsList((state) => state.searchTerm);
+
+  const highlightText = (text: string, term: string) => {
+    if (!term) return text;
+    const parts = text.split(new RegExp(`(${term})`, "gi"));
+    return parts.map((part, index) => 
+      part.toLowerCase() === term.toLowerCase() ? (
+        <span key={index} className="bg-yellow-200 dark:bg-blue-500">{part}</span>
+      ) : (
+        part
+      )
+    );
+  };
+
+  const highlightedContent = useMemo(
+    () => highlightText(news.data, searchTerm),
+    [news.data, searchTerm]
+  );
+
   return (
     <Modal
       isOpen={isOpen}
@@ -23,14 +44,16 @@ const NewsModal: React.FC<NewsModalProps> = ({
       title={news.publisher}
       body={
         <div>
-          <p>
-            {/* <strong>Data:</strong>  */}
-            {news.data}
+          <p className="leading-relaxed tracking-wide">
+            <strong>Content: </strong> 
+            {highlightedContent}
           </p>
           <Separator className="my-4" />
+          <ScrollArea>
           <p>
             <strong>Date:</strong> {formatDate(news.date)}
           </p>
+          </ScrollArea>
           <Separator className="my-4" />
           <p>
             <strong>Publisher:</strong> {news.publisher}

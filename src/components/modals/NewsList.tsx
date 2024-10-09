@@ -4,7 +4,6 @@ import NewsCard from "../NewsCard";
 import NewsModal from "./NewsModal";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
-import axios from "axios";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +21,6 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Input } from "@/components/ui/input";
 import { useNewsList } from "@/hooks/useNewsList";
 import { Separator } from "@radix-ui/react-separator";
 
@@ -38,7 +36,6 @@ const NewsList: React.FC = () => {
   );
   const [sortBy, setSortBy] = useState("newest");
   const searchTerm = useNewsList((state) => state.searchTerm);
-  const { data: session } = useSession();
 
   const fetchNews = async () => {
     try {
@@ -215,7 +212,7 @@ const NewsList: React.FC = () => {
             />
           ))
         ) : (
-            <h1 className="text-center text-gray-500">{noNewsMessage()}</h1>
+          <h1 className="col-span-full text-5xl font-medium text-center text-gray-500 w-full h-full mt-40">{noNewsMessage()}</h1>
         )}
       </div>
 

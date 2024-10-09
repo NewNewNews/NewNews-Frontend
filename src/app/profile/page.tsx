@@ -10,14 +10,12 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300 bg-neutral-100 dark:bg-neutral-900">
-      <div className="container mx-auto p-4 sm:p-6 space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card
-            className="lg:col-span-1 overflow-hidden"
-          >
+      <div className="container mx-auto p-4 sm:p-6 space-y-6 flex flex-col items-center justify-center">
+        <div className="w-full max-w-md">
+          <Card className="overflow-hidden">
             <CardContent className="p-6">
               <div className="flex flex-col items-center space-y-4">
-                <Avatar/>
+                <Avatar />
                 <h2 className="text-xl sm:text-2xl font-semibold">
                   {session?.user?.name.split("@")[0]}
                 </h2>
@@ -29,19 +27,19 @@ const ProfilePage = () => {
                     <div className="flex justify-between items-center mb-2">
                       <h3 className="text-lg font-medium">User Profile Card</h3>
                     </div>
-                    <div
-                      className={`transition-all duration-300`}
-                    >
+                    <div className="transition-all duration-300">
                       <p className="text-sm mb-1">ID: {session?.user?.id}</p>
-                      <p className="text-sm">Role: {session?.user?.isAdmin? "admin" : "user"}</p>
+                      <p className="text-sm">
+                        Role: {session?.user?.isAdmin ? "admin" : "user"}
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
               </div>
             </CardContent>
           </Card>
-          </div>
         </div>
+      </div>
     </div>
   );
 };
