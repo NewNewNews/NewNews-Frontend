@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import Modal from "./Modal";
 import { Separator } from "../ui/separator";
 import { ScrollArea } from "../ui/scroll-area";
@@ -17,6 +17,21 @@ const NewsModal: React.FC<NewsModalProps> = ({
   news,
   formatDate,
 }) => {
+  useEffect(() => {
+    if (isOpen) {
+      // Disable scrolling on body when modal is open
+      document.body.style.overflow = "hidden";
+    } else {
+      // Re-enable scrolling when modal is closed
+      document.body.style.overflow = "";
+    }
+
+    // Clean up when the component unmounts or when the modal closes
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
   const searchTerm = useNewsList((state) => state.searchTerm);
 
   const highlightText = (text: string, term: string) => {
