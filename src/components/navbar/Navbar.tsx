@@ -35,13 +35,6 @@ const Navbar: React.FC<NavbarProps> = () => {
             <div className="flex items-center gap-3">
               <ModeToggle />
               <UserMenu />
-              <div>
-                {session
-                  ? session.user.isAdmin
-                    ? "admin"
-                    : "user"
-                  : "not login"}
-              </div>
             </div>
           </div>
         </Container>

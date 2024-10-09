@@ -16,16 +16,27 @@ export default function UserMenu() {
   const loginModal = useLoginModal();
   const logoutModal = useLogoutModal();
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   const toggleMenu = useCallback(() => {
     setIsOpen((value) => !value);
   }, []);
 
+  const handleHomePage = () => {
+    router.push("/");
+    setIsOpen(false);
+  };
+
+  const handleProfile = () => {
+    router.push("/profile");
+    setIsOpen(false);
+  };
+
   return (
     <div className="relative">
       <div className="flex flex-row items-center gap-3">
         <div
-          onClick={() => {}}
+          onClick={handleHomePage}
           className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 dark:bg-black dark:hover:bg-neutral-800 transition cursor-pointer"
         >
           NewNews your home
@@ -50,7 +61,7 @@ export default function UserMenu() {
                   />
                   <hr />
                   <MenuItem label="My Favourites" onClick={() => {}} />
-                  <MenuItem label="My Profile" onClick={() => {}} />
+                  <MenuItem label="My Profile" onClick={handleProfile} />
                   <hr />
                   <MenuItem onClick={logoutModal.onOpen} label="Logout"  />
                 </>

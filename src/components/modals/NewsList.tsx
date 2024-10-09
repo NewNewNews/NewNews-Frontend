@@ -133,7 +133,7 @@ const NewsList: React.FC = () => {
       <h1 className="text-2xl font-bold mb-4">
         {sortBy === "newest" ? "Newest News" : "Oldest News"}
       </h1>
-      <div className="flex flex-col md:flex-row md:items-center mb-4 gap-4 sm:flex-row">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center mb-4 gap-4 ">
         {/* Category Filter */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -188,12 +188,12 @@ const NewsList: React.FC = () => {
 
         {/* Sort By Date */}
         <Select value={sortBy} onValueChange={setSortBy}>
-          <SelectTrigger className="w-36 dark:bg-black">
+          <SelectTrigger className="md:w-fit sm:w-56 justify-center bg-white dark:bg-black">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="newest">Newest News</SelectItem>
-            <SelectItem value="oldest">Oldest News</SelectItem>
+            <SelectItem value="newest" className="">Newest News</SelectItem>
+            <SelectItem value="oldest" className="">Oldest News</SelectItem>
             <Separator />
             <SelectItem value=" ">Clear Sort</SelectItem>
           </SelectContent>

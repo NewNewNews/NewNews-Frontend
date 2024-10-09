@@ -1,5 +1,6 @@
 import NextAuth, { DefaultSession, DefaultUser } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import jwt from 'jsonwebtoken';
 
 declare module "next-auth" {
   interface Session {
@@ -78,7 +79,7 @@ const handler = NextAuth({
         token.id = userData.id;
         token.name = userData.name;
         token.email = userData.email;
-        token.isAdmin = userData.isAdmin;
+        token.isAdmin = userData.is_admin;
       }
 
       return token;
