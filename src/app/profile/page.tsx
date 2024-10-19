@@ -1,12 +1,49 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import Avatar from "@/components/Avatar";
 import { useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import CircularProgress from "@mui/material/CircularProgress";
+import toast from "react-hot-toast";
 
 const ProfilePage = () => {
   const { data: session } = useSession();
+  const isAdmin = session?.user?.isAdmin;
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const scrapeNews = async () => {
+    setLoading(true);
+    setMessage(""); // Reset previous messages
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/scrape`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url: "" }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success) {
+        setMessage("Scraping successful!"); // Feedback for success
+        toast.success("Scraping successful!");
+      } else {
+        setMessage("Scraping failed!"); // Feedback for failure
+        toast.error("Scraping failed!");
+      }
+    } else {
+      setMessage("Error during scraping!"); // Feedback for error
+    }
+    setLoading(false);
+  };
+
+  const updateProfile = async () => {
+    // Implement update profile
+  }
+  
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300 bg-neutral-100 dark:bg-neutral-900">
@@ -30,9 +67,37 @@ const ProfilePage = () => {
                     <div className="transition-all duration-300">
                       <p className="text-sm mb-1">ID: {session?.user?.id}</p>
                       <p className="text-sm">
-                        Role: {session?.user?.isAdmin ? "admin" : "user"}
+                        Role: {isAdmin ? "admin" : "user"}
                       </p>
                     </div>
+                    {isAdmin && (
+                      <div className="flex flex-col items-center">
+                        <Button
+                          onClick={scrapeNews}
+                          className="mt-4 px-4 py-2 rounded transition-colors duration-300"
+                          disabled={loading}
+                        >
+                          {loading ? (
+                            <CircularProgress size={24} color="inherit" />
+                          ) : (
+                            "Scrape News"
+                          )}
+                        </Button>
+                        {/* Message Display */}
+                        {message && (
+                          <p
+                            className={`mt-2 text-sm ${
+                              message.includes("Error") ||
+                              message.includes("failed")
+                                ? "text-red-500"
+                                : "text-green-500"
+                            }`}
+                          >
+                            {message}
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>
