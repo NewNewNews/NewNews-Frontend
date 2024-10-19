@@ -6,8 +6,6 @@ import Search from "./Search";
 import UserMenu from "./UserMenu";
 import { ModeToggle } from "./ModeToggle";
 import { useSession } from "next-auth/react";
-import { use, useState, useEffect } from "react";
-import axios from "axios";
 
 interface User {
   message: String;

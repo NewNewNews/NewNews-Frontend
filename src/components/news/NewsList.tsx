@@ -1,9 +1,8 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
-import NewsCard from "../NewsCard";
-import NewsModal from "./NewsModal";
+import NewsCard from "./NewsCard";
+import NewsModal from "../modals/NewsModal";
 import toast from "react-hot-toast";
-import { useSession } from "next-auth/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,20 +28,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
 import { cn } from "@/lib/utils";
 
 const NewsList: React.FC = () => {
@@ -80,8 +67,14 @@ const NewsList: React.FC = () => {
       ).sort((a, b) => a.localeCompare(b));
       setPublishers(uniquePublishers);
 
-      const dates = Array.from(new Set(data.map((news: { date: string }) => new Date(news.date).toDateString())));
-      setAvailableDates(dates.map(dateStr => new Date(dateStr)));
+      const dates = Array.from(
+        new Set(
+          data.map((news: { date: string }) =>
+            new Date(news.date).toDateString()
+          )
+        )
+      );
+      setAvailableDates(dates.map((dateStr) => new Date(dateStr)));
     } catch (error) {
       toast.error("Error fetching news");
     }
@@ -162,10 +155,11 @@ const NewsList: React.FC = () => {
   };
 
   const isAvailableDate = (date: Date) => {
-    return availableDates.some(availableDate => 
-      date.getFullYear() === availableDate.getFullYear() &&
-      date.getMonth() === availableDate.getMonth() &&
-      date.getDate() === availableDate.getDate()
+    return availableDates.some(
+      (availableDate) =>
+        date.getFullYear() === availableDate.getFullYear() &&
+        date.getMonth() === availableDate.getMonth() &&
+        date.getDate() === availableDate.getDate()
     );
   };
 
@@ -174,7 +168,7 @@ const NewsList: React.FC = () => {
       <h1 className="text-2xl font-bold mb-4">
         {sortBy === "newest" ? "Newest News" : "Oldest News"}
       </h1>
-      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center mb-4 gap-4 ">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap md:flex-row md:flex-wrap mb-4 gap-4 ">
         {/* Category Filter */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -185,7 +179,6 @@ const NewsList: React.FC = () => {
           <DropdownMenuContent className="w-56">
             <DropdownMenuLabel>Category</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <ScrollArea className="h-72 w-54 rounded-md border">
               {categories.map((cat) => (
                 <DropdownMenuItem
                   key={cat}
@@ -194,7 +187,6 @@ const NewsList: React.FC = () => {
                   {cat}
                 </DropdownMenuItem>
               ))}
-            </ScrollArea>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => setSelectedCategory(null)}>
               Clear Filter
@@ -232,16 +224,13 @@ const NewsList: React.FC = () => {
           <PopoverTrigger asChild>
             <Button
               variant={"outline"}
-              className={cn(
-                "text-center font-normal",
-                !selectedDate
-              )}
+              className={cn("text-center font-normal", !selectedDate)}
             >
               {selectedDate ? (
-              format(selectedDate, "PPP") // Format the selected date if any
-            ) : (
-              <h1>Pick a date</h1> // Placeholder when no date is selected
-            )}
+                format(selectedDate, "PPP") // Format the selected date if any
+              ) : (
+                <h1>Pick a date</h1> // Placeholder when no date is selected
+              )}
               <CalendarIcon className="ml-2 h-4 w-4 opacity-50" />
             </Button>
           </PopoverTrigger>
@@ -301,6 +290,9 @@ const NewsList: React.FC = () => {
           onClose={handleCloseModal}
           news={selectedNews}
           formatDate={formatDate}
+          onSummarize={() => {}}
+          onCompare={() => {}}
+          // onVoice={() => {}}
         />
       )}
     </>
