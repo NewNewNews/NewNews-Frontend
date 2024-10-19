@@ -5,8 +5,6 @@ import { ScrollArea } from "../ui/scroll-area";
 import { useNewsList } from "@/hooks/useNewsList";
 import { Button } from "../ui/button";
 import { SpeakerLoudIcon, SpeakerOffIcon } from "@radix-ui/react-icons";
-import { on } from "events";
-import { set } from "date-fns";
 
 interface NewsModalProps {
   isOpen: boolean;
@@ -32,12 +30,14 @@ const NewsModal: React.FC<NewsModalProps> = ({
       // Disable scrolling on body when modal is open
       document.body.style.overflow = "hidden";
     } else {
+      onStop(); // Stop speech when modal is closed
       // Re-enable scrolling when modal is closed
       document.body.style.overflow = "";
     }
 
     // Clean up when the component unmounts or when the modal closes
     return () => {
+      onStop(); // Stop speech when modal is closed
       document.body.style.overflow = "";
     };
   }, [isOpen]);
