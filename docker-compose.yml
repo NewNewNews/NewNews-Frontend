@@ -1,11 +1,16 @@
-version: "3.8"
 services:
   nextjs:
     build: ./
+    container_name: nextjs
+    hostname: nextjs
     ports:
       - 80:80
     networks:
-      - web
+      - app_network
+    environment:
+      - NEXTAUTH_URL=http://nextjs:3000/
+      - NEXTAUTH_SECRET=uu/k0H94LFkIGQozSLSG3lsWPrJUeLipWX1VvDDkgqw=
+      - NEXT_PUBLIC_API_URL=http://gateway:8080
   nginx:
     image: nginx:alpine
     ports:
@@ -17,7 +22,7 @@ services:
     depends_on:
       - nextjs
     networks:
-      - web
+      - app_network
 networks:
-  web:
-    driver: bridge
+  app_network:
+    external: true
