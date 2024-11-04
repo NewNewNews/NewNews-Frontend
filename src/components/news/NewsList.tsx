@@ -19,7 +19,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNewsList } from "@/hooks/useNewsList";
 import { Separator } from "@radix-ui/react-separator";
 import { Calendar } from "@/components/ui/calendar";
@@ -55,16 +54,22 @@ const NewsList: React.FC = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/api/news`
       );
       const data = await response.json();
-      setNewsList(data);
+      if (Array.isArray(data)) {
+        setNewsList(data);
+      } else {
+        console.error("API response is not an array:", data);
+        setNewsList([]);
+      }
 
       const uniqueCategories = Array.from(
         new Set(data.map((news: { category: string }) => news.category))
-      ).sort((a, b) => a.localeCompare(b));
+      ).sort((a, b) => (a as string).localeCompare(b as string));
       setCategories(uniqueCategories);
+      
 
       const uniquePublishers = Array.from(
         new Set(data.map((news: { publisher: string }) => news.publisher))
-      ).sort((a, b) => a.localeCompare(b));
+      ).sort((a, b) => (a as string).localeCompare(b as string));
       setPublishers(uniquePublishers);
 
       const dates = Array.from(
@@ -74,7 +79,7 @@ const NewsList: React.FC = () => {
           )
         )
       );
-      setAvailableDates(dates.map((dateStr) => new Date(dateStr)));
+      setAvailableDates(dates.map((dateStr) => new Date(dateStr as string)));
     } catch (error) {
       toast.error("Error fetching news");
     }
@@ -290,7 +295,6 @@ const NewsList: React.FC = () => {
           onClose={handleCloseModal}
           news={selectedNews}
           formatDate={formatDate}
-          onSummarize={() => {}}
           onCompare={() => {}}
           // onVoice={() => {}}
         />

@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Modal from "./Modal";
 import { Separator } from "../ui/separator";
 import { ScrollArea } from "../ui/scroll-area";
@@ -11,7 +11,6 @@ interface NewsModalProps {
   onClose: () => void;
   news: any;
   formatDate: (dateString: string) => string;
-  onSummarize: () => void;
   onCompare: () => void;
   // onVoice: () => void;
 }
@@ -21,7 +20,6 @@ const NewsModal: React.FC<NewsModalProps> = ({
   onClose,
   news,
   formatDate,
-  onSummarize,
   onCompare,
   // onVoice,
 }) => {
@@ -43,8 +41,8 @@ const NewsModal: React.FC<NewsModalProps> = ({
   }, [isOpen]);
 
   const searchTerm = useNewsList((state) => state.searchTerm);
-
   const [isSpeaking, setIsSpeaking] = React.useState(false);
+  const [summary, setSummary] = useState<string | null>(null);
 
   const highlightText = (text: string, term: string) => {
     if (!term) return text;
@@ -90,6 +88,25 @@ const NewsModal: React.FC<NewsModalProps> = ({
     }
   };
 
+  const onSummarize = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/summary/one`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: news.url }), // Send the news URL in the request body
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch summary");
+      }
+
+      const data = await response.json();
+      setSummary(data.summarized_text); // Save the summary
+    } catch (error) {
+      console.error("Error fetching summary:", error);
+    }
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -102,9 +119,9 @@ const NewsModal: React.FC<NewsModalProps> = ({
             <Button onClick={onSummarize} className="px-4 py-2 mr-2">
               Summarize News
             </Button>
-            <Button onClick={onCompare} className="px-4 py-2 mr-2">
+            {/* <Button onClick={onCompare} className="px-4 py-2 mr-2">
               Compare News
-            </Button>
+            </Button> */}
             <Button size="icon" onClick={onPlaying}>
               {isSpeaking ? (
                 <SpeakerOffIcon className="h-[1.2rem] w-[1.2rem] scale-100 transition-all dar" />
@@ -114,6 +131,15 @@ const NewsModal: React.FC<NewsModalProps> = ({
               <span className="sr-only">Toggle Voice</span>
             </Button>
           </div>
+          {summary && (
+            <>
+              <Separator className="my-4" />
+              <p>
+                <strong>Summary:</strong> {summary}
+              </p>
+              <Separator className="my-4" />
+            </>
+          )}
           <p className="leading-relaxed tracking-wide">
             <strong>Content: </strong>
             {highlightedContent}
