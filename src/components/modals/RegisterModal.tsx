@@ -34,7 +34,7 @@ const RegisterModal = () => {
     setIsLoading(true);
 
     axios
-      .post(`${process.env.NEXT_PUBLIC_API_URL}/api/register`, data)
+      .post(`/api/register`, data)
       .then(() => {
         localStorage.setItem("token", data.token);
         toast.success("Account created successfully.");

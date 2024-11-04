@@ -17,7 +17,7 @@ const ProfilePage = () => {
   const scrapeNews = async () => {
     setLoading(true);
     setMessage(""); // Reset previous messages
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/scrape`, {
+    const res = await fetch(`/api/scrape`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

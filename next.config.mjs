@@ -9,6 +9,14 @@ const nextConfig = {
     };
     return config;
   },
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: process.env.API_GATEWAY_URL || "http://gateway:8080/api/:path*", // Docker internal URL
+      },
+    ];
+  },
 };
 
 export default nextConfig;

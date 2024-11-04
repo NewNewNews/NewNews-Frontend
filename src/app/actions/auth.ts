@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 
 export async function login(email: string, hashedPassword: string) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login`, {
+  const response = await fetch(`/api/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

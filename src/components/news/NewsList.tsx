@@ -51,7 +51,7 @@ const NewsList: React.FC = () => {
   const fetchNews = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/news`
+        `/api/news`
       );
       const data = await response.json();
       if (Array.isArray(data)) {

@@ -34,7 +34,7 @@ const handler = NextAuth({
         if (!credentials?.email || !credentials?.hashedPassword) return null;
 
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/login`,
+          `/api/login`,
           {
             method: "POST",
             body: JSON.stringify(credentials),
@@ -67,7 +67,7 @@ const handler = NextAuth({
       }
 
       // Fetch additional user data from /api/me
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/protected/me`, {
+      const res = await fetch(`/api/protected/me`, {
         headers: {
           Cookie: `auth_token=${token.accessToken}`,
         },

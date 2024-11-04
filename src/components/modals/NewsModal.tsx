@@ -90,7 +90,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
 
   const onSummarize = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/summary/one`, {
+      const response = await fetch(`/api/summary/one`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: news.url }), // Send the news URL in the request body
