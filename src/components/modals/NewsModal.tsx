@@ -5,6 +5,17 @@ import { ScrollArea } from "../ui/scroll-area";
 import { useNewsList } from "@/hooks/useNewsList";
 import { Button } from "../ui/button";
 import { SpeakerLoudIcon, SpeakerOffIcon } from "@radix-ui/react-icons";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { useSession } from "next-auth/react";
 
 interface NewsModalProps {
   isOpen: boolean;
@@ -43,6 +54,24 @@ const NewsModal: React.FC<NewsModalProps> = ({
   const searchTerm = useNewsList((state) => state.searchTerm);
   const [isSpeaking, setIsSpeaking] = React.useState(false);
   const [summary, setSummary] = useState<string | null>(null);
+  const [updatedNews, setUpdatedNews] = useState(news);
+  const { data: session } = useSession();
+  // const isAdmin = session?.user?.isAdmin;
+  const isAdmin = true;
+
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [isOpen]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUpdatedNews((prevNews: any) => ({ ...prevNews, [name]: value }));
+  };
 
   const highlightText = (text: string, term: string) => {
     if (!term) return text;
@@ -107,6 +136,39 @@ const NewsModal: React.FC<NewsModalProps> = ({
     }
   };
 
+  const handleUpdate = async () => {
+    try {
+      const response = await fetch("/api/news", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedNews),
+      });
+      if (!response.ok) throw new Error("Failed to update news");
+      const result = await response.json();
+      console.log("Update successful:", result);
+    } catch (error) {
+      console.error("Error updating news:", error);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch("/api/news", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: news.id }),
+      });
+
+      if (!response.ok) throw new Error("Failed to delete news");
+
+      const result = await response.json();
+      console.log("Delete successful:", result);
+      onClose(); // Close the modal after deletion
+    } catch (error) {
+      console.error("Error deleting news:", error);
+    }
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -131,6 +193,94 @@ const NewsModal: React.FC<NewsModalProps> = ({
               <span className="sr-only">Toggle Voice</span>
             </Button>
           </div>
+          {isAdmin && (
+            <div className="flex gap-4 mb-4">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button>Edit News</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Edit News</DialogTitle>
+                    <DialogDescription>
+                      Make changes to your news here. Click save when you're
+                      done.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="data" className="text-right">
+                        Content
+                      </Label>
+                      <input
+                        name="data"
+                        value={updatedNews.data}
+                        onChange={handleInputChange}
+                        className="col-span-3 border p-2 h-12 w-full"
+                        placeholder="Edit data"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="category" className="text-right">
+                        Category
+                      </Label>
+                      <input
+                        name="category"
+                        value={updatedNews.category}
+                        onChange={handleInputChange}
+                        className="col-span-3 border p-2 w-full"
+                        placeholder="Edit category"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="date" className="text-right">
+                        Date
+                      </Label>
+                      <input
+                        name="date"
+                        value={updatedNews.date}
+                        onChange={handleInputChange}
+                        className="col-span-3 border p-2 w-full"
+                        placeholder="Edit date"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="publisher" className="text-right">
+                        Publisher
+                      </Label>
+                      <input
+                        name="publisher"
+                        value={updatedNews.publisher}
+                        onChange={handleInputChange}
+                        className="col-span-3 border p-2 w-full"
+                        placeholder="Edit publisher"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="url" className="text-right">
+                        Link
+                      </Label>
+                      <input
+                        name="url"
+                        value={updatedNews.url}
+                        onChange={handleInputChange}
+                        className="col-span-3 border p-2 w-full"
+                        placeholder="Edit URL"
+                      />
+                    </div>
+                  </div>
+
+                  <DialogFooter>
+                    <Button type="submit" onClick={handleUpdate}>Save changes</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              <Button onClick={handleDelete} className="bg-red-500 text-white">
+                Delete News
+              </Button>
+            </div>
+          )}
           {summary && (
             <>
               <Separator className="my-4" />
