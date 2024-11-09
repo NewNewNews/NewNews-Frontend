@@ -43,6 +43,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
   const searchTerm = useNewsList((state) => state.searchTerm);
   const [isSpeaking, setIsSpeaking] = React.useState(false);
   const [summary, setSummary] = useState<string | null>(null);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null); // State to manage audio
 
   const highlightText = (text: string, term: string) => {
     if (!term) return text;
@@ -63,20 +64,49 @@ const NewsModal: React.FC<NewsModalProps> = ({
     [news.data, searchTerm]
   );
 
-  const onVoice = () => {
-    const utterance = new SpeechSynthesisUtterance(news.data);
-    utterance.lang = "th-TH"; // Set language to Thai
-    speechSynthesis.speak(utterance); // Speak the news content
+  const onVoice = async () => {
+    try {
+      // Send POST request with id in the body
+      const response = await fetch('/api/audio/news', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: news.url }), // Send the news ID in the request body
+      });
+      
+      if (!response.ok) {
+        console.error("Failed to fetch audio data");
+        return;
+      }
 
-    // Set speaking state to true
-    setIsSpeaking(true);
+      // Convert the audio data response to a blob
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob); // Create an object URL for the audio
 
-    // Event listener to reset speaking state when speech ends
-    utterance.onend = () => setIsSpeaking(false);
+      // Create a new audio element and set it in the state
+      const newAudio = new Audio(audioUrl);
+      setAudio(newAudio); // Save the audio object
+
+      // Set speaking state to true
+      setIsSpeaking(true);
+
+      // Play the audio file
+      newAudio.play();
+
+      // Event listener to reset speaking state when speech ends
+      newAudio.onended = () => setIsSpeaking(false);
+
+    } catch (error) {
+      console.error("Error fetching audio:", error);
+    }
   };
 
   const onStop = () => {
-    speechSynthesis.cancel(); // Stop speech
+    if (audio) {
+      audio.pause(); // Stop speech
+      audio.currentTime = 0; // Reset audio to start
+    }
     setIsSpeaking(false); // Reset speaking state
   };
 
