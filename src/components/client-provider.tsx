@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider"; // Make sure this i
 import React from "react";
 
 import { ReactNode } from "react";
+import { AuthProvider } from "@/providers/AuthProvider";
 
 interface ClientProvidersProps {
   children: ReactNode;
@@ -14,14 +15,16 @@ interface ClientProvidersProps {
 const ClientProviders = ({ children }: ClientProvidersProps) => {
   return (
     <SessionProvider>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        {children}
-      </ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </AuthProvider>
     </SessionProvider>
   );
 };

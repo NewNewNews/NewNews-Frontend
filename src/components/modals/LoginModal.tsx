@@ -13,11 +13,13 @@ import useLoginModal from "@/hooks/useLoginModal";
 import { toast } from "react-hot-toast";
 import Button from "../Button";
 import { useRouter } from "next/navigation";
-
+import { useAuth } from "@/hooks/useAuth";
 const LoginModal = () => {
   const router = useRouter();
   const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
+  
 
   const {
     register,
@@ -34,20 +36,18 @@ const LoginModal = () => {
     setIsLoading(true);
 
     try {
-      const result = await signIn("credentials", {
-        ...data,
-        redirect: false,
+      await login({
+        email: data.email,
+        hashedPassword: data.hashedPassword,
       });
 
-      if (result?.error) {
-        toast.error(result.error);
-      } else if (result?.ok) {
-        toast.success("Logged in successfully");
-        router.refresh();
-        loginModal.onClose();
-      }
+      toast.success("Logged in successfully");
+      router.refresh();
+      loginModal.onClose();
     } catch (error) {
-      toast.error("Something went wrong.");
+      toast.error(
+        error instanceof Error ? error.message : "Something went wrong"
+      );
     } finally {
       setIsLoading(false);
     }

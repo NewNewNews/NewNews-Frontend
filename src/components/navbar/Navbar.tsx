@@ -5,7 +5,8 @@ import Logo from "./Logo";
 import Search from "./Search";
 import UserMenu from "./UserMenu";
 import { ModeToggle } from "./ModeToggle";
-import { useSession } from "next-auth/react";
+import { useUser } from "@/hooks/useUser";
+
 
 interface User {
   message: String;
@@ -18,8 +19,8 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = () => {
-  const { data: session } = useSession();
-  console.log(session?.user.isAdmin);
+  const { user, isLoading } = useUser();
+  console.log(user?.isAdmin);
 
   return (
     <div className="fixed top-0 z-10 w-full bg-white dark:bg-black shadow-sm border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

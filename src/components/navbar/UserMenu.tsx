@@ -7,12 +7,12 @@ import MenuItem from "./MenuItem";
 import useRegisterModal from "@/hooks/useRegisterModal";
 import useLoginModal from "@/hooks/useLoginModal";
 import useLogoutModal from "@/hooks/useLogoutModal";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/hooks/useUser";
 
 export default function UserMenu() {
-  const { data: session } = useSession();
-  const isAdmin = session?.user?.isAdmin;
+  const { user, isLoading } = useUser();
+  const isAdmin = user?.isAdmin;
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
   const logoutModal = useLogoutModal();
@@ -54,10 +54,10 @@ export default function UserMenu() {
         {isOpen && (
           <div className="absolute rounded-xl shadow-md w-[40vw] md:w-3/4 bg-white dark:bg-neutral-900 overflow-hidden right-0 top-12 text-sm">
             <div className="flex flex-col cursor-pointer">
-              {session ? (
+              {user ? (
                 <>
                   <MenuItem
-                    label={`Welcome, ${session.user?.email}`}
+                    label={`Welcome, ${user?.email}`}
                     onClick={() => {}}
                   />
                   <hr />

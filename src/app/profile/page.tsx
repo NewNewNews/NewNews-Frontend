@@ -3,14 +3,14 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import Avatar from "@/components/Avatar";
-import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import CircularProgress from "@mui/material/CircularProgress";
 import toast from "react-hot-toast";
+import { useUser } from "@/hooks/useUser";
 
 const ProfilePage = () => {
-  const { data: session } = useSession();
-  const isAdmin = session?.user?.isAdmin;
+  const { user, isLoading } = useUser();
+  const isAdmin = user?.isAdmin;
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -54,10 +54,10 @@ const ProfilePage = () => {
               <div className="flex flex-col items-center space-y-4">
                 <Avatar />
                 <h2 className="text-xl sm:text-2xl font-semibold">
-                  {session?.user?.name.split("@")[0]}
+                  {user?.name.split("@")[0]}
                 </h2>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {session?.user?.email}
+                  {user?.email}
                 </p>
                 <Card className="w-full bg-white dark:bg-neutral-700">
                   <CardContent className="p-4">
@@ -65,7 +65,7 @@ const ProfilePage = () => {
                       <h3 className="text-lg font-medium">User Profile Card</h3>
                     </div>
                     <div className="transition-all duration-300">
-                      <p className="text-sm mb-1">ID: {session?.user?.id}</p>
+                      <p className="text-sm mb-1">ID: {user?.id}</p>
                       <p className="text-sm">
                         Role: {isAdmin ? "admin" : "user"}
                       </p>

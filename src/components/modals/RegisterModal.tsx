@@ -12,6 +12,7 @@ import useRegisterModal from "@/hooks/useRegisterModal";
 import { toast } from "react-hot-toast";
 import Button from "../Button";
 import useLoginModal from "@/hooks/useLoginModal";
+import apiClient from "@/app/api/axios";
 
 const RegisterModal = () => {
   const registerModal = useRegisterModal();
@@ -31,21 +32,54 @@ const RegisterModal = () => {
   });
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-    axios
-      .post(`/api/register`, data)
-      .then(() => {
-        localStorage.setItem("token", data.token);
-        toast.success("Account created successfully.");
-        registerModal.onClose();
-      })
-      .catch((error) => {
-        toast.error("Something went wrong.");
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      // Add explicit headers to the request
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      };
+
+      const response = await apiClient.post("/register", data, config);
+
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+
+        // Set the token for subsequent requests
+        apiClient.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${response.data.token}`;
+      }
+
+      toast.success("Account created successfully.");
+      registerModal.onClose();
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          console.error(
+            "Server Error:",
+            error.response.status,
+            error.response.data
+          );
+          const errorMessage =
+            error.response.data?.message ||
+            error.response.data?.error ||
+            "Registration failed.";
+          toast.error(errorMessage);
+        } else if (error.request) {
+          console.error("Network Error:", error.request);
+          toast.error("Network error. Please check your connection.");
+        } else {
+          console.error("Error:", error.message);
+          toast.error("An unexpected error occurred.");
+        }
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
   const loginOpen = () => {
     LoginModal.onOpen();

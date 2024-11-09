@@ -3,8 +3,8 @@ services:
     build: ./
     container_name: nextjs
     hostname: nextjs
-    # ports:
-    #   # - 80:80
+    ports:
+      - 3000:3000
     networks:
       - app_network
   nginx:
