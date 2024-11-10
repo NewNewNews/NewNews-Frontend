@@ -61,7 +61,7 @@ export default function UserMenu() {
                     onClick={() => {}}
                   />
                   <hr />
-                  <MenuItem label="My Favourites" onClick={() => {}} />
+                  {/* <MenuItem label="My Favourites" onClick={() => {}} /> */}
                   {isAdmin ? (
                     <>
                       <MenuItem label="Admin Panel" onClick={handleProfile} />

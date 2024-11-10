@@ -95,14 +95,14 @@ const NewsModal: React.FC<NewsModalProps> = ({
   const onVoice = async () => {
     try {
       // Send POST request with id in the body
-      const response = await fetch('/api/audio/news', {
-        method: 'POST',
+      const response = await fetch("/api/audio/news", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ id: news.url }), // Send the news ID in the request body
       });
-      
+
       if (!response.ok) {
         console.error("Failed to fetch audio data");
         return;
@@ -124,7 +124,6 @@ const NewsModal: React.FC<NewsModalProps> = ({
 
       // Event listener to reset speaking state when speech ends
       newAudio.onended = () => setIsSpeaking(false);
-
     } catch (error) {
       console.error("Error fetching audio:", error);
     }
@@ -178,6 +177,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
       toast.success("News updated successfully");
     } catch (error) {
       console.error("Error updating news:", error);
+      console.log("Updated news:", updatedNews);
       toast.error("Failed to update news");
     }
   };
@@ -210,22 +210,24 @@ const NewsModal: React.FC<NewsModalProps> = ({
       title={news.publisher}
       body={
         <div>
-          <div className="flex mb-4">
-            <Button onClick={onSummarize} className="px-4 py-2 mr-2">
-              Summarize News
-            </Button>
-            {/* <Button onClick={onCompare} className="px-4 py-2 mr-2">
+          {user && (
+            <div className="flex mb-4">
+              <Button onClick={onSummarize} className="px-4 py-2 mr-2">
+                Summarize News
+              </Button>
+              {/* <Button onClick={onCompare} className="px-4 py-2 mr-2">
               Compare News
             </Button> */}
-            <Button size="icon" onClick={onPlaying}>
-              {isSpeaking ? (
-                <SpeakerOffIcon className="h-[1.2rem] w-[1.2rem] scale-100 transition-all dar" />
-              ) : (
-                <SpeakerLoudIcon className="h-[1.2rem] w-[1.2rem] scale-100 transition-all" />
-              )}
-              <span className="sr-only">Toggle Voice</span>
-            </Button>
-          </div>
+              <Button size="icon" onClick={onPlaying}>
+                {isSpeaking ? (
+                  <SpeakerOffIcon className="h-[1.2rem] w-[1.2rem] scale-100 transition-all dar" />
+                ) : (
+                  <SpeakerLoudIcon className="h-[1.2rem] w-[1.2rem] scale-100 transition-all" />
+                )}
+                <span className="sr-only">Toggle Voice</span>
+              </Button>
+            </div>
+          )}
           {isAdmin && (
             <div className="flex gap-4 mb-4">
               <Dialog>
@@ -278,18 +280,6 @@ const NewsModal: React.FC<NewsModalProps> = ({
                       />
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="publisher" className="text-right">
-                        Publisher
-                      </Label>
-                      <input
-                        name="publisher"
-                        value={updatedNews.publisher}
-                        onChange={handleInputChange}
-                        className="col-span-3 border p-2 w-full"
-                        placeholder="Edit publisher"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
                       <Label htmlFor="url" className="text-right">
                         Link
                       </Label>
@@ -304,7 +294,9 @@ const NewsModal: React.FC<NewsModalProps> = ({
                   </div>
 
                   <DialogFooter>
-                    <Button type="submit" onClick={handleUpdate}>Save changes</Button>
+                    <Button type="submit" onClick={handleUpdate}>
+                      Save changes
+                    </Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>

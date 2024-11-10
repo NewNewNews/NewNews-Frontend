@@ -13,6 +13,7 @@ import { toast } from "react-hot-toast";
 import Button from "../Button";
 import useLoginModal from "@/hooks/useLoginModal";
 import apiClient from "@/app/api/axios";
+import { signIn } from "next-auth/react";
 
 const RegisterModal = () => {
   const registerModal = useRegisterModal();
@@ -123,18 +124,18 @@ const RegisterModal = () => {
   const footerContent = (
     <div className="flex flex-col gap-4 mt-3">
       <hr className="dark:border-white" />
-      <Button
+      {/* <Button
         outline
         label="Continue with Google"
         icon={FcGoogle}
-        onClick={() => {}}
+        onClick={() => signIn("google")}
       />
       <Button
         outline
         label="Continue with Github"
         icon={AiFillGithub}
         onClick={() => {}}
-      />
+      /> */}
       <div className="text-neutral-500 text-center mt-4 font-light">
         <div className="justify-center flex fex-row items-center gap-2">
           <div>Already have an account?</div>
