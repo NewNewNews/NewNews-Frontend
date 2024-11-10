@@ -10,7 +10,7 @@ import { useUser } from "@/hooks/useUser";
 
 const ProfilePage = () => {
   const { user, isLoading } = useUser();
-  const isAdmin = user?.isAdmin;
+  const isAdmin = user?.is_admin;
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -39,11 +39,6 @@ const ProfilePage = () => {
     }
     setLoading(false);
   };
-
-  const updateProfile = async () => {
-    // Implement update profile
-  }
-  
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300 bg-neutral-100 dark:bg-neutral-900">

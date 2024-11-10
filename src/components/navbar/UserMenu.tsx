@@ -12,7 +12,7 @@ import { useUser } from "@/hooks/useUser";
 
 export default function UserMenu() {
   const { user, isLoading } = useUser();
-  const isAdmin = user?.isAdmin;
+  const isAdmin = user?.is_admin;
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
   const logoutModal = useLogoutModal();

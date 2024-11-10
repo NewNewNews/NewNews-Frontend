@@ -15,7 +15,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { useSession } from "next-auth/react";
+import { useUser } from "@/hooks/useUser";
+import toast from "react-hot-toast";
 
 interface NewsModalProps {
   isOpen: boolean;
@@ -56,10 +57,8 @@ const NewsModal: React.FC<NewsModalProps> = ({
   const [summary, setSummary] = useState<string | null>(null);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null); // State to manage audio
   const [updatedNews, setUpdatedNews] = useState(news);
-  const { data: session } = useSession();
-  // const isAdmin = session?.user?.isAdmin;
-  const isAdmin = true;
-
+  const { user, isLoading } = useUser();
+  const isAdmin = user?.is_admin;
 
   useEffect(() => {
     if (isOpen) {
@@ -176,8 +175,10 @@ const NewsModal: React.FC<NewsModalProps> = ({
       if (!response.ok) throw new Error("Failed to update news");
       const result = await response.json();
       console.log("Update successful:", result);
+      toast.success("News updated successfully");
     } catch (error) {
       console.error("Error updating news:", error);
+      toast.error("Failed to update news");
     }
   };
 
@@ -186,16 +187,18 @@ const NewsModal: React.FC<NewsModalProps> = ({
       const response = await fetch("/api/news", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: news.id }),
+        body: JSON.stringify({ url: news.url }),
       });
 
       if (!response.ok) throw new Error("Failed to delete news");
 
       const result = await response.json();
       console.log("Delete successful:", result);
+      toast.success("News deleted successfully");
       onClose(); // Close the modal after deletion
     } catch (error) {
       console.error("Error deleting news:", error);
+      toast.error("Failed to delete news");
     }
   };
 

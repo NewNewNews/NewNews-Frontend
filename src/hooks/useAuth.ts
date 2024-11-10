@@ -7,7 +7,7 @@ interface User {
   id: string;
   name: string;
   email: string;
-  isAdmin: boolean;
+  is_admin: boolean;
 }
 
 interface AuthStore {
