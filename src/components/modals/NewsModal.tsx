@@ -32,7 +32,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
   onClose,
   news,
   formatDate,
-  onCompare,
+  // onCompare,
   // onVoice,
 }) => {
   useEffect(() => {
@@ -55,6 +55,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
   const searchTerm = useNewsList((state) => state.searchTerm);
   const [isSpeaking, setIsSpeaking] = React.useState(false);
   const [summary, setSummary] = useState<string | null>(null);
+  const [compare, setCompare] = useState<string | null>(null);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null); // State to manage audio
   const [updatedNews, setUpdatedNews] = useState(news);
   const { user, isLoading } = useUser();
@@ -164,6 +165,60 @@ const NewsModal: React.FC<NewsModalProps> = ({
     }
   };
 
+  const onCompare = async () => {
+    try {
+      if (news.event_id === -1) {
+        setCompare("Not enough news data to compare"); // Set compare text to show no data
+        return;
+      }
+      const response = await fetch(`/api/compare/one`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ event_id: news.event_id, date: news.date }), // Send the news event_id and date in the request body
+        // body: JSON.stringify({ event_id: "0001", date: "2024-11-10" }), // Send the news event_id and date in the request body
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch compare");
+      }
+
+      const data = await response.json();
+      /**
+       data = {
+        "entries": [
+          {
+            "key": "similarities",
+            "values": [
+              "ทักษิณ ชินวัตร แสดงวิสัยทัศน์ในงาน Dinner Talk Vision for Thailand 2024",
+              "งานจัดขึ้นที่พารากอนฮอลล์ ห้างสรรพสินค้าสยามพารากอน",
+              "นักธุรกิจและนักการเมืองมาร่วมฟังวิสัยทัศน์เพียบ"
+            ]
+          },
+          {
+            "key": "differences",
+            "values": [
+              "dailynews และ thairath กล่าวถึงบุคคลที่เข้าร่วมงานเป็นนักธุรกิจและนักการเมือง แต่ไม่ได้ระบุรายชื่อเฉพาะ",
+              "thairath ระบุรายชื่อบุคคลที่มาร่วมงานเช่น “ธนินท์ - สารัชถ์ - คีรี” และ “ธรรมนัส” นั่งข้าง “เดชอิศม์”",
+              "pptv กล่าวถึงการแย้มข่าวสารเกี่ยวกับ 'ดิจิทัลวอลเล็ต' และการใช้งบประมาณในเดือนกันยายนและตุลาคม"
+            ]
+          }
+        ]
+      };
+      */
+      
+      const comparison_text = data.entries.map((entry: any) => {
+        const values = entry.values.map((value: string) => {
+          return value;
+        });
+        return values.join("\n");
+      }).join("\n\n");
+
+      setCompare(comparison_text);
+    } catch (error) {
+      console.error("Error fetching compare:", error);
+    }
+  };
+
   const handleUpdate = async () => {
     try {
       const response = await fetch("/api/news", {
@@ -215,9 +270,9 @@ const NewsModal: React.FC<NewsModalProps> = ({
               <Button onClick={onSummarize} className="px-4 py-2 mr-2">
                 Summarize News
               </Button>
-              {/* <Button onClick={onCompare} className="px-4 py-2 mr-2">
+              <Button onClick={onCompare} className="px-4 py-2 mr-2">
               Compare News
-            </Button> */}
+            </Button>
               <Button size="icon" onClick={onPlaying}>
                 {isSpeaking ? (
                   <SpeakerOffIcon className="h-[1.2rem] w-[1.2rem] scale-100 transition-all dar" />
@@ -311,6 +366,15 @@ const NewsModal: React.FC<NewsModalProps> = ({
               <Separator className="my-4" />
               <p>
                 <strong>Summary:</strong> {summary}
+              </p>
+              <Separator className="my-4" />
+            </>
+          )}
+          {compare && (
+            <>
+              <Separator className="my-4" />
+              <p>
+                <strong>Comparison:</strong> <p>{compare}</p>
               </p>
               <Separator className="my-4" />
             </>
