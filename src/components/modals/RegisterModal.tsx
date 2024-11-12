@@ -28,7 +28,7 @@ const RegisterModal = () => {
     defaultValues: {
       //   username: "",
       email: "",
-      password: "",
+      hashedPassword: "",
     },
   });
 
@@ -110,9 +110,9 @@ const RegisterModal = () => {
         required
       />
       <Input
-        id="password"
-        type="password"
-        label="Password"
+        id="hashedPassword"
+        type="hashedPassword"
+        label="hashedPassword"
         disabled={isLoading}
         register={register}
         errors={errors}
