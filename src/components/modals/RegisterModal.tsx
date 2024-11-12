@@ -111,8 +111,8 @@ const RegisterModal = () => {
       />
       <Input
         id="hashedPassword"
-        type="hashedPassword"
-        label="hashedPassword"
+        type="password"
+        label="Password"
         disabled={isLoading}
         register={register}
         errors={errors}
